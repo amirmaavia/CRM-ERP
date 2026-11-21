@@ -1,0 +1,2 @@
+const {PrismaClient}=require('@prisma/client'); const p=new PrismaClient();
+(async()=>{const rows=await p.$queryRawUnsafe("SHOW COLUMNS FROM `User` LIKE 'businessAccess'");if(!rows.length)await p.$executeRawUnsafe('ALTER TABLE `User` ADD COLUMN `businessAccess` JSON NULL');console.log('Business access column ready; existing accounts preserved.');})().catch(e=>{console.error(e.code||e.message);process.exitCode=1}).finally(()=>p.$disconnect());

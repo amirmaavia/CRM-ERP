@@ -1,0 +1,1 @@
+import{InventoryManager}from"@/components/inventory/inventory-manager";import{requireSession}from"@/lib/auth/session";export default async function Page(){await requireSession();return <InventoryManager/>}

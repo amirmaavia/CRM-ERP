@@ -1,0 +1,1 @@
+import{SuppliersManager}from"@/components/inventory/suppliers-manager";import{requireSession}from"@/lib/auth/session";export default async function Page(){await requireSession();return <SuppliersManager/>}

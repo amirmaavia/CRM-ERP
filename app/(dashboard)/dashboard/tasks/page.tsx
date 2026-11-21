@@ -1,0 +1,1 @@
+import { TasksManager } from "@/components/work/tasks-manager"; import { requireSession } from "@/lib/auth/session"; export default async function Page(){await requireSession();return <TasksManager/>}

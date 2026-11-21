@@ -1,0 +1,1 @@
+export default function UnauthorizedPage() { return <div className="panel mx-auto max-w-xl p-8 text-center"><p className="text-5xl">403</p><h1 className="mt-3 text-xl font-bold">Access denied</h1><p className="mt-2 text-slate-500">Your role does not have permission to view this page.</p><a className="btn-primary mt-6" href="/dashboard">Return to dashboard</a></div>; }

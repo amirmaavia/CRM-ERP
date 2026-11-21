@@ -1,0 +1,1 @@
+import{CompaniesManager}from"@/components/companies/companies-manager";import{requireSession}from"@/lib/auth/session";export default async function Page(){await requireSession();return <CompaniesManager/>}

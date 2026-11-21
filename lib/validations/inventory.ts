@@ -1,0 +1,7 @@
+import { PurchaseType } from "@prisma/client";
+import { z } from "zod";
+export const productSchema = z.object({ name:z.string().trim().min(2).max(191),sku:z.string().trim().min(1).max(100),unit:z.string().trim().min(1).max(30),purchasePrice:z.coerce.number().min(0),salePrice:z.coerce.number().min(0),taxRate:z.coerce.number().min(0).max(100).default(0),minimumStock:z.coerce.number().min(0).default(0),categoryId:z.string().optional().nullable(),active:z.coerce.boolean().default(true) });
+export const productUpdateSchema=productSchema.partial();
+export const adjustmentSchema=z.object({quantity:z.coerce.number().refine(x=>x!==0),note:z.string().trim().min(3).max(2000),warehouseId:z.string().optional().nullable()});
+export const supplierSchema=z.object({name:z.string().trim().min(2).max(191),contactPerson:z.string().optional().nullable(),email:z.union([z.string().email(),z.literal('')]).optional().nullable(),phone:z.string().optional().nullable(),address:z.string().optional().nullable(),openingBalance:z.coerce.number().min(0).default(0)});
+export const purchaseSchema=z.object({supplierId:z.string().min(1),type:z.nativeEnum(PurchaseType).default("CREDIT_PURCHASE"),orderDate:z.string().optional(),expectedDate:z.string().optional().nullable(),notes:z.string().optional().nullable(),items:z.array(z.object({productId:z.string().min(1),quantity:z.coerce.number().positive(),unitPrice:z.coerce.number().min(0),taxRate:z.coerce.number().min(0).max(100).default(0)})).min(1)});

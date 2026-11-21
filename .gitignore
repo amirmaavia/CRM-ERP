@@ -1,0 +1,11 @@
+node_modules
+.next
+.env
+*.log
+coverage
+dist
+*.tsbuildinfo
+prisma/*.db
+prisma/*.db-journal
+
+.next-verify

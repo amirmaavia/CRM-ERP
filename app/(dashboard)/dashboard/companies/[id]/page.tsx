@@ -1,0 +1,1 @@
+import{CompanyStatement}from"@/components/companies/company-statement";import{requireSession}from"@/lib/auth/session";export default async function Page({params}:{params:{id:string}}){await requireSession();return <CompanyStatement id={params.id}/>}

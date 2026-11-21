@@ -1,0 +1,1 @@
+import{InvoicesManager}from"@/components/finance/invoices-manager";import{requireSession}from"@/lib/auth/session";export default async function Page(){await requireSession();return <InvoicesManager/>}

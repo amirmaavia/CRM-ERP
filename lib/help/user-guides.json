@@ -1,0 +1,230 @@
+[
+  {
+    "id": "guide-1",
+    "title": "First login",
+    "category": "Getting started",
+    "href": "/dashboard/profile",
+    "steps": [
+      "Ask the system administrator for your account email and temporary password. Public registration is disabled.",
+      "Sign in at /login. Open Profile, then Password, and replace the temporary password.",
+      "Sign in again after changing your password. Check your name and role in the header.",
+      "Ask whether your account has an isolated workspace or shares the administrator workspace. An empty isolated workspace is normal."
+    ]
+  },
+  {
+    "id": "guide-2",
+    "title": "Understand your access",
+    "category": "Getting started",
+    "href": "/dashboard",
+    "steps": [
+      "Use the sidebar to open the modules available to your role.",
+      "If a page says Permission denied, ask the administrator to review your role; do not use another person's login.",
+      "Only the system administrator creates business owners and administrators. Business owners can create sub-users in their own workspace. Shared staff see workspace records according to their permissions.",
+      "Use Sign out when you finish, especially on a shared computer."
+    ]
+  },
+  {
+    "id": "guide-3",
+    "title": "Set up business details",
+    "category": "Getting started",
+    "href": "/dashboard/settings",
+    "steps": [
+      "Ask the administrator to open Settings and review business name, address, currency, timezone and tax details.",
+      "Check invoice branding and contact details before printing your first bill.",
+      "For an isolated account without Settings access, request administrator assistance; do not enter transactions under another workspace.",
+      "Confirm the opening stock and outstanding customer/vendor balances before starting live entry. Avoid importing and manually entering the same opening records."
+    ]
+  },
+  {
+    "id": "guide-4",
+    "title": "Create customers and vendors",
+    "category": "Setup",
+    "href": "/dashboard/companies",
+    "steps": [
+      "Open Customer & Vendor Ledgers and search for the company first.",
+      "Click Add company if it does not exist. Enter its name and contact details.",
+      "Select Customer when you sell to it, Vendor when you buy from it, or both for the same business.",
+      "Click Create unified account. Open Full Ledger to check the account."
+    ]
+  },
+  {
+    "id": "guide-5",
+    "title": "Add products",
+    "category": "Setup",
+    "href": "/dashboard/inventory",
+    "steps": [
+      "Open Inventory and click Add product.",
+      "Enter the product name, unique SKU, unit, purchase price and sale price. Use a consistent unit such as pcs or box.",
+      "Enter the applicable tax rate and minimum stock threshold, then click Save.",
+      "Search for the SKU to confirm it saved. New stock is recorded through a purchase receipt or an authorized opening adjustment; saving a product alone does not receive goods."
+    ]
+  },
+  {
+    "id": "guide-6",
+    "title": "Record a purchase and receive goods",
+    "category": "Daily work",
+    "href": "/dashboard/suppliers",
+    "steps": [
+      "Open Purchases. Make sure the vendor and product already exist.",
+      "Select the Purchases tab, click Add purchase, and choose the vendor, purchase type, product, quantity, unit price and tax rate.",
+      "Click Create and check the purchase total. Credit Purchase leaves an amount payable; Cash Purchase is settled when received.",
+      "Only after goods physically arrive, click Receive or Receive & Pay. Check the received quantity, inventory and vendor ledger. Do not record the same cash payment again."
+    ]
+  },
+  {
+    "id": "guide-7",
+    "title": "Create a sale",
+    "category": "Daily work",
+    "href": "/dashboard/invoices",
+    "steps": [
+      "Open Sales & Invoices and click Create bill.",
+      "Choose the customer and Cash Sale or Credit Sale. Check the issue date and due date where applicable.",
+      "Select the product and quantity; review prices, discounts, tax and total before posting.",
+      "Click Post bill & update ledger. Check the invoice and View / Print Slip. Cash sales create a receipt automatically; credit sales remain due."
+    ]
+  },
+  {
+    "id": "guide-8",
+    "title": "Receive customer money",
+    "category": "Daily work",
+    "href": "/dashboard/payments",
+    "steps": [
+      "Open Receipts & Payments and click Record payment.",
+      "Choose Customer and select the outstanding invoice being settled.",
+      "Enter the amount, payment method, date and reference. Check that the amount matches the money received.",
+      "Click Record, then review the invoice due amount and company ledger. A partial payment leaves a remaining balance. Do not record a second receipt for an already-settled cash sale."
+    ]
+  },
+  {
+    "id": "guide-9",
+    "title": "Pay a vendor",
+    "category": "Daily work",
+    "href": "/dashboard/payments",
+    "steps": [
+      "Open Receipts & Payments and click Record payment.",
+      "Choose Supplier and select the purchase being settled.",
+      "Enter the amount, method, payment date and reference, then click Record.",
+      "Check the remaining payable in Purchases and Full Ledger. Do not duplicate the automatic payment for a cash purchase."
+    ]
+  },
+  {
+    "id": "guide-10",
+    "title": "Adjust stock",
+    "category": "Daily work",
+    "href": "/dashboard/inventory",
+    "steps": [
+      "Count the actual goods and identify the reason for the difference.",
+      "Find the product in Inventory and click Adjust.",
+      "Enter a signed change, not the final total: if the system shows 10 and you counted 8, enter -2. Enter a clear reason.",
+      "Click Apply and confirm the final quantity. Stock adjustment alone does not issue a customer refund or vendor credit."
+    ]
+  },
+  {
+    "id": "guide-11",
+    "title": "Manage leads and customers",
+    "category": "Follow-ups",
+    "href": "/dashboard/contacts",
+    "steps": [
+      "Open Contacts & Leads and choose Customers or Leads.",
+      "Click Add customer or Add lead. Enter contact information and the available tags, source or status fields.",
+      "Save and search for the contact to check for duplicates.",
+      "Use Convert for a qualified lead when appropriate. Open the contact profile to add notes and review its history."
+    ]
+  },
+  {
+    "id": "guide-12",
+    "title": "Track deals and tasks",
+    "category": "Follow-ups",
+    "href": "/dashboard/deals",
+    "steps": [
+      "Open Deals Pipeline and click Add deal. Enter title, value, probability and expected close date.",
+      "Update the deal stage as the opportunity progresses. A won deal does not replace posting a sales invoice.",
+      "Open Tasks and click Add task. Enter title, priority and due/reminder times.",
+      "Use the List or Calendar view to review upcoming work. Do not assume reminder emails are delivered merely because a reminder time is saved."
+    ]
+  },
+  {
+    "id": "guide-13",
+    "title": "Review ledgers and reports",
+    "category": "Review",
+    "href": "/dashboard/reports",
+    "steps": [
+      "Open Customer & Vendor Ledgers, find the business, and open Full Ledger.",
+      "Compare sales, purchases, receipts and payments against the source documents. Receivable means the customer owes you; payable means you owe the vendor.",
+      "Open Reports and select the date range. Review aging, stock valuation, cash book and the available profit summary.",
+      "Print or save a PDF where the screen offers printing. Profit summaries depend on complete expense and cost data and are not a substitute for a reconciled set of accounts."
+    ]
+  },
+  {
+    "id": "guide-14",
+    "title": "Import existing Excel records",
+    "category": "Administration",
+    "href": "/dashboard/import",
+    "steps": [
+      "The system administrator opens Excel Import and downloads the matching template.",
+      "Copy data under the template headers; confirm dates, SKUs and customer/vendor identities.",
+      "Upload the file, choose the data type and review invalid or duplicate rows before Confirm Import.",
+      "Check the resulting records and totals. Use historical billing only when appropriate for old sales that must not change current stock; do not import transactions already entered manually."
+    ]
+  },
+  {
+    "id": "guide-15",
+    "title": "Create and support users",
+    "category": "Administration",
+    "href": "/admin/users",
+    "steps": [
+      "As system administrator, open Management, Users, then Create user / Manage access.",
+      "Click Add user. Enter name, email, temporary password and the least-privileged suitable role.",
+      "Choose Own isolated workspace for separate data, or explicitly choose Share administrator workspace for staff who need that data. Click Create user.",
+      "Use role and status controls to maintain access. Review Management activity and Failures only when investigating issues. Never ask staff to send passwords."
+    ]
+  },
+  {
+    "id": "guide-16",
+    "title": "Recover a password",
+    "category": "Troubleshooting",
+    "href": "/dashboard/profile",
+    "steps": [
+      "On the login screen, choose Forgot password and enter the account email.",
+      "If recovery is configured, check the inbox and spam folder for the reset link. Use it within 30 minutes.",
+      "Set the new password and sign in again. Previous sessions become invalid.",
+      "If recovery is unavailable or no email arrives, contact the system administrator. Email delivery requires system SMTP configuration."
+    ]
+  },
+  {
+    "id": "guide-17",
+    "title": "Handle a failed save",
+    "category": "Troubleshooting",
+    "href": "/dashboard/activity",
+    "steps": [
+      "Read the message and avoid repeatedly clicking Save.",
+      "Refresh the relevant list and search for the record: the server may have saved it even if the screen failed to refresh.",
+      "For duplicate SKU/email errors, locate the existing record instead of creating another copy. For insufficient stock, verify receipts and physical stock.",
+      "If it still fails, send the administrator the screen name, time, record reference and error message. Do not include passwords. Review My Activity for your recent actions."
+    ]
+  },
+  {
+    "id": "guide-18",
+    "title": "Close the day and month",
+    "category": "Review",
+    "href": "/dashboard/reports",
+    "steps": [
+      "Daily: check sales, receipts, purchase receipts and payments against documents; count cash and review unpaid balances.",
+      "Daily: check low stock and tomorrow's tasks. Investigate errors or duplicate entries before leaving.",
+      "Monthly: review customer aging, supplier dues, physical stock and bank/cash differences with the accountant. Keep an approved record of expenses until the expense-entry workflow is added.",
+      "Ask the administrator to confirm a tested database backup. A printed report is not a backup. Period locking and full financial reconciliation remain planned improvements."
+    ]
+  },
+  {
+    "id": "business-sub-users",
+    "title": "Manage business users and multiple access options",
+    "category": "Administration",
+    "href": "/dashboard/management",
+    "steps": [
+      "Open Management Tools as the business owner or a user granted Manage Business Users. This screen only lists staff in your current business.",
+      "Click Add business user and enter the name, email and temporary password. Select multiple access checkboxes, such as Sales and Vendors.",
+      "Choose All business access (Business admin) for full business operations. This does not grant platform administration or access to other businesses. With no boxes selected, the user has only basic account access.",
+      "Click Save user access. For an existing user, choose Edit access, change the checkboxes and save. Use Activate, Deactivate or Suspend to control sign-in. Sales and payments include the read-only catalogs they need."
+    ]
+  }
+]
