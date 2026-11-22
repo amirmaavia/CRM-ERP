@@ -1,6 +1,6 @@
 import { createPrivateKey, createPublicKey, privateDecrypt, constants } from "node:crypto";
 import { z } from "zod";
-import { fromBase64, open, seal, toBase64, type Envelope } from "./v2-crypto";
+import { fromBase64, open, seal, toBase64 } from "./v2-crypto";
 import { v2Routes, type Handler } from "./v2-routes";
 
 function privateKey() {
@@ -23,16 +23,24 @@ export async function handleV2(request: Request): Promise<Response> {
   if ((origin && origin !== new URL(request.url).origin) || request.headers.get("sec-fetch-site") === "cross-site") return Response.json({ error: "Forbidden origin" }, { status: 403 });
   let key: CryptoKey;
   let payload: z.infer<typeof payloadSchema>;
+  let code = "V2_ENVELOPE_INVALID";
   try {
     const raw = await request.text();
     if (raw.length > 24 * 1024 * 1024) return Response.json({ error: "Payload too large" }, { status: 413 });
-    const envelope = JSON.parse(raw) as Envelope & { key: string };
-    const secret = privateDecrypt({ key: privateKey(), padding: constants.RSA_PKCS1_OAEP_PADDING, oaepHash: "sha256" }, fromBase64(envelope.key));
+    const envelope = z.object({ version: z.literal(2), key: z.string().min(1), iv: z.string().min(1), data: z.string().min(1) }).parse(JSON.parse(raw));
+    code = "V2_KEY_CONFIG_INVALID";
+    const rsaKey = privateKey();
+    code = "V2_DECRYPT_FAILED";
+    const secret = privateDecrypt({ key: rsaKey, padding: constants.RSA_PKCS1_OAEP_PADDING, oaepHash: "sha256" }, fromBase64(envelope.key));
     key = await crypto.subtle.importKey("raw", Uint8Array.from(secret), "AES-GCM", false, ["encrypt", "decrypt"]);
-    payload = payloadSchema.parse(await open(key, envelope));
+    const decrypted = await open(key, envelope);
+    code = "V2_PAYLOAD_INVALID";
+    payload = payloadSchema.parse(decrypted);
+    code = "V2_REQUEST_EXPIRED";
     if (Math.abs(Date.now() - payload.timestamp) > 60_000) throw new Error("Expired request");
   } catch {
-    return Response.json({ error: "Invalid encrypted V2 request" }, { status: 400, headers: { "Cache-Control": "no-store" } });
+    console.error("[api-v2]", code);
+    return Response.json({ error: "Invalid encrypted V2 request", code }, { status: code === "V2_KEY_CONFIG_INVALID" ? 503 : 400, headers: { "Cache-Control": "no-store" } });
   }
   let response: Response;
   try {

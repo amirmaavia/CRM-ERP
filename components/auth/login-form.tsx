@@ -1,7 +1,7 @@
 "use client";
 
 import { zodResolver } from "@hookform/resolvers/zod";
-import { createSupabaseBrowserClient } from "@/lib/supabase/client";
+import { AuthConfigurationError, createSupabaseBrowserClient } from "@/lib/supabase/client";
 import { useSearchParams } from "next/navigation";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
@@ -18,11 +18,15 @@ export function LoginForm() {
     setError("");
     try {
       const { error } = await createSupabaseBrowserClient().auth.signInWithPassword({ email: data.email.trim().toLowerCase(), password: data.password });
-      if (error) return setError("Invalid email or password, or the account is inactive.");
+      if (error) {
+        if (error.status === 429) return setError("Too many sign-in attempts. Please wait and try again.");
+        if (!error.status || error.status >= 500) return setError("Cannot reach the authentication service. Please try again. Reference: AUTH_CONNECTION_FAILED");
+        return setError("Invalid email or password, or the account is inactive.");
+      }
       const target = new URL(params.get("callbackUrl") || "/dashboard", window.location.origin);
       window.location.href = target.origin === window.location.origin ? target.href : "/dashboard";
-    } catch {
-      setError("The authentication service is temporarily unavailable.");
+    } catch (error) {
+      setError(error instanceof AuthConfigurationError ? error.message : "The authentication service is temporarily unavailable. Reference: AUTH_LOGIN_FAILED");
     }
   }
   return <form onSubmit={handleSubmit(submit)} className="space-y-4">
