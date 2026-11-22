@@ -12,9 +12,15 @@ test("middleware denies access cleanly for invalid configuration and redirects s
     const missing = await middleware(request());
     assert.equal(missing.status, 503);
     assert.equal(missing.headers.get("cache-control"), "no-store");
+    assert.equal(missing.headers.get("x-auth-diagnostic"), "AUTH_CONFIG_URL_MISSING");
+    process.env.NEXT_PUBLIC_SUPABASE_URL = "https://example.supabase.co";
+    const missingKey = await middleware(request());
+    assert.equal(missingKey.headers.get("x-auth-diagnostic"), "AUTH_CONFIG_KEY_MISSING");
     process.env.NEXT_PUBLIC_SUPABASE_URL = "invalid-url";
     process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY = "test-public-key";
-    assert.equal((await middleware(request())).status, 503);
+    const invalidUrl = await middleware(request());
+    assert.equal(invalidUrl.status, 503);
+    assert.match(await invalidUrl.text(), /Reference: AUTH_CONFIG_URL_INVALID/);
     process.env.NEXT_PUBLIC_SUPABASE_URL = "https://example.supabase.co";
     // No cookies means no auth session; no network request is needed.
     const signedOut = await middleware(request());
