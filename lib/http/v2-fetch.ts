@@ -18,7 +18,7 @@ export async function v2Fetch(input: RequestInfo | URL, init?: RequestInit, tran
     path: url.pathname + url.search, method: original.method,
     contentType: original.headers.get("content-type"),
     body: original.body ? toBase64(new Uint8Array(await original.arrayBuffer())) : null,
-    timestamp: Number.isFinite(serverTime) && serverTime > 0 ? serverTime + (performance.now() - receivedAt) : Date.now(), nonce: crypto.randomUUID(),
+    timestamp: Number.isFinite(serverTime) && serverTime > 0 ? Math.floor(serverTime + (performance.now() - receivedAt)) : Date.now(), nonce: crypto.randomUUID(),
   });
   const response = await transport("/api/v2", {
     method: "POST", credentials: original.credentials, signal: original.signal, cache: "no-store",
