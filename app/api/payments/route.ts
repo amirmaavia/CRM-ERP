@@ -4,6 +4,7 @@ import { NextResponse } from "next/server";
 import { prisma } from "@/lib/db/prisma";
 import { apiError, getTenantContext } from "@/lib/http/api";
 import { paymentSchema } from "@/lib/validations/finance";
+import { customerPaymentUpdate, supplierPaymentUpdate, PostingError } from "@/lib/finance/posting-rules";
 
 async function handleGET() {
   const auth = await getTenantContext();
@@ -30,8 +31,8 @@ async function handlePOST(request: Request) {
   if (!parsed.success) return NextResponse.json({ error: "Invalid payment details" }, { status: 400 });
 
   const input = parsed.data;
-  const totalAllocated = input.allocations.reduce((s, x) => s + x.amount, 0);
-  if (Math.abs(totalAllocated - input.amount) > 0.005) return NextResponse.json({ error: "Allocation total must equal payment amount" }, { status: 400 });
+  const totalAllocated = input.allocations.reduce((sum, allocation) => sum.add(allocation.amount), new Prisma.Decimal(0));
+  if (!totalAllocated.eq(new Prisma.Decimal(input.amount))) return NextResponse.json({ error: "Allocation total must equal payment amount" }, { status: 400 });
   if (input.partyType === "CUSTOMER" && !input.contactId || input.partyType === "SUPPLIER" && !input.supplierId) return NextResponse.json({ error: "Select the payment party" }, { status: 400 });
 
   try {
@@ -59,17 +60,13 @@ async function handlePOST(request: Request) {
           if (!allocation.invoiceId) throw new Error("Invoice allocation required");
           const invoice = await tx.invoice.findUniqueOrThrow({ where: { id: allocation.invoiceId, userId } });
           if (invoice.contactId !== input.contactId) throw new Error("Invoice belongs to another customer");
-          const remaining = invoice.total.sub(invoice.paidAmount);
-          if (amount.gt(remaining)) throw new Error(`Allocation exceeds ${invoice.number} balance`);
-          const paid = invoice.paidAmount.add(amount);
-          await tx.invoice.update({ where: { id: invoice.id }, data: { paidAmount: paid, status: paid.gte(invoice.total) ? InvoiceStatus.PAID : InvoiceStatus.PARTIALLY_PAID } });
+          await tx.invoice.update({ where: { id: invoice.id }, data: customerPaymentUpdate(invoice, amount) });
           await tx.paymentAllocation.create({ data: { paymentId: created.id, invoiceId: invoice.id, amount } });
         } else {
           if (!allocation.purchaseOrderId) throw new Error("Purchase order allocation required");
           const po = await tx.purchaseOrder.findUniqueOrThrow({ where: { id: allocation.purchaseOrderId, userId } });
           if (po.supplierId !== input.supplierId) throw new Error("Purchase order belongs to another supplier");
-          const paidAmount = po.paidAmount.add(amount);
-          await tx.purchaseOrder.update({ where: { id: po.id }, data: { paidAmount, status: paidAmount.gte(po.total) ? "RECEIVED" : "PARTIALLY_RECEIVED" } });
+          await tx.purchaseOrder.update({ where: { id: po.id }, data: supplierPaymentUpdate(po, amount) });
           await tx.paymentAllocation.create({ data: { paymentId: created.id, purchaseOrderId: po.id, amount } });
         }
       }
@@ -82,9 +79,11 @@ async function handlePOST(request: Request) {
 
       await tx.activityLog.create({ data: { userId, action: ActivityAction.PAYMENT, entityType: "Payment", entityId: created.id, description: `Recorded payment ${created.number}` } });
       return created;
-    });
+    }, { isolationLevel: Prisma.TransactionIsolationLevel.Serializable });
     return NextResponse.json(payment, { status: 201 });
   } catch (error) {
+    if (error instanceof PostingError) return NextResponse.json({ error: error.message }, { status: 400 });
+    if (error instanceof Prisma.PrismaClientKnownRequestError && error.code === "P2034") return NextResponse.json({ error: "Another transaction changed this balance. Refresh before submitting again." }, { status: 409 });
     return apiError(error);
   }
 }

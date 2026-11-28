@@ -16,7 +16,8 @@
     "db:transfer": "tsx scripts/migrate-to-supabase.ts",
     "user:create-admin": "tsx scripts/create-platform-admin.ts",
     "db:studio": "prisma studio",
-    "test:security": "tsx --test tests/security.test.ts"
+    "test:security": "tsx --test tests/security.test.ts",
+    "test:finance": "tsx --test tests/finance.test.ts"
   },
   "prisma": {
     "seed": "tsx prisma/seed.ts"

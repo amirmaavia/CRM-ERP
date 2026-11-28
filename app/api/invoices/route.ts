@@ -4,6 +4,7 @@ import { NextResponse } from "next/server";
 import { prisma } from "@/lib/db/prisma";
 import { apiError, getTenantContext } from "@/lib/http/api";
 import { invoiceSchema } from "@/lib/validations/finance";
+import { assertInvoiceStock } from "@/lib/finance/posting-rules";
 
 async function handleGET(request: Request) {
   const auth = await getTenantContext();
@@ -56,6 +57,7 @@ async function handlePOST(request: Request) {
       const productIds = Array.from(new Set(input.items.map((item) => item.productId)));
       const products = await tx.product.findMany({ where: { id: { in: productIds }, active: true, userId } });
       if (products.length !== productIds.length) throw new Error("One or more products are unavailable");
+      if (input.affectsStock && !input.stockOverride) assertInvoiceStock(products, input.items);
 
       const lines = input.items.map((item) => {
         const product = products.find((candidate) => candidate.id === item.productId)!;
@@ -101,9 +103,12 @@ async function handlePOST(request: Request) {
 
       if (input.affectsStock) {
         for (const line of lines) {
-          const before = line.product.currentQuantity;
-          const after = before.sub(line.quantity);
-          await tx.product.update({ where: { id: line.product.id }, data: { currentQuantity: after } });
+          const updated = await tx.product.update({
+            where: { id: line.product.id, userId, ...(!input.stockOverride ? { currentQuantity: { gte: line.quantity } } : {}) },
+            data: { currentQuantity: { decrement: line.quantity } },
+          });
+          const after = updated.currentQuantity;
+          const before = after.add(line.quantity);
           await tx.stockMovement.create({
             data: { productId: line.product.id, type: "OUT", quantity: line.quantity.neg(), quantityBefore: before, quantityAfter: after, invoiceId: invoice.id, reference: invoice.number, note: "Invoice sale", createdById: actorId, userId },
           });
@@ -121,9 +126,10 @@ async function handlePOST(request: Request) {
 
       await tx.activityLog.create({ data: { userId, action: ActivityAction.CREATE, entityType: "Invoice", entityId: invoice.id, description: `Created invoice ${invoice.number}`, newValues: { total: total.toString(), stockOverride: input.stockOverride } } });
       return invoice;
-    });
+    }, { isolationLevel: Prisma.TransactionIsolationLevel.Serializable });
     return NextResponse.json({ ...result, subtotal: Number(result.subtotal), taxTotal: Number(result.taxTotal), discountTotal: Number(result.discountTotal), total: Number(result.total), paidAmount: Number(result.paidAmount) }, { status: 201 });
   } catch (error) {
+    if (error instanceof Prisma.PrismaClientKnownRequestError && error.code === "P2034") return NextResponse.json({ error: "Stock changed during checkout. Refresh before submitting again." }, { status: 409 });
     return NextResponse.json({ error: error instanceof Error ? error.message : "Invoice creation failed" }, { status: 400 });
   }
 }
